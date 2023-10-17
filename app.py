@@ -5,6 +5,8 @@ import logging
 import json
 import ast
 
+from flask_cors import CORS
+
 logging.basicConfig(
     level=logging.DEBUG,  # Escolha o nível de registro desejado (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -15,6 +17,9 @@ logging.basicConfig(
 )
 
 app = Flask(__name__)
+CORS(app, resources={r"/my_notes": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/new_note": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/delete_note": {"origins": "http://localhost:3000"}})
 
 client = MongoClient(
     'localhost', 
@@ -81,8 +86,9 @@ def delete_note():
     data_decoded = decode_data(dados)
     logging.info(f'Data that should be deleted : {data_decoded}')
 
-    if data_decoded and '_id' in data_decoded:
-        data_id = ObjectId(data_decoded['_id'])
+    if data_decoded and 'id' in data_decoded:
+        logging.info(f"_id encontrado --> {data_decoded['id']}")
+        data_id = ObjectId(data_decoded['id'])
         logging.info(data_id)
 
         result = notas.delete_one({'_id': data_id})
