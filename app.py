@@ -100,10 +100,34 @@ def delete_note():
     else:
         return jsonify({"mensagem": "Dados inválidos ou ID do documento não fornecido"})
 
-@app.route('/edit_note')
+@app.route('/edit_note', methods=['POST'])
 def edit_note():
-    # Will be implement as soon as possible
-    pass
+    try:
+        dados = request.data
+        data_decoded = decode_data(dados)
+        
+        print(f' ----- data_decoded ------>: {data_decoded}')
+
+        id = data_decoded['_id']
+        object_id = ObjectId(id)
+
+        existing_data = notas.find_one({'_id': object_id})
+
+        print(f'EXISTING_DATA: {existing_data}')
+
+        if existing_data:
+            updated_note_content = data_decoded['note_content']
+            print(f"------> NOTE_CONTENT: {data_decoded['note_content']}")
+            notas.update_one({'_id': object_id}, {'$set': {'note_content': updated_note_content}})
+            #db.series.updateOne({"Série": "Grim"}, {$set: {"Temporadas disponíveos": 6}})
+
+            return jsonify({'message': 'Data updated successfully'}), 200
+        else:
+            return jsonify({'message': 'Document didnt find'}), 400
+
+    except Exception as err:
+        return jsonify({'error': str(err)}), 500
+    
 
 if __name__=='__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
