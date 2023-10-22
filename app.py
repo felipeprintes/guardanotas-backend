@@ -20,6 +20,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/my_notes": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/new_note": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/delete_note": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/edit_note": {"origins": "http://localhost:3000"}})
 
 client = MongoClient(
     'localhost', 
